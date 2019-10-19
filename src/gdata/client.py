@@ -31,6 +31,9 @@ in this module is GDClient.
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
+from __future__ import absolute_import
+import six
+
 import re
 import atom.client
 import atom.core
@@ -240,7 +243,7 @@ class GDClient(atom.client.AtomPubClient):
       body will be converted to the class using
       atom.core.parse.
     """
-    if isinstance(uri, (str, unicode)):
+    if isinstance(uri, (str, six.text_type)):
       uri = atom.http_core.Uri.parse_uri(uri)
 
     # Add the gsession ID to the URL to prevent further redirects.
@@ -291,7 +294,7 @@ class GDClient(atom.client.AtomPubClient):
         if location is not None:
           # Make a recursive call with the gsession ID in the URI to follow
           # the redirect.
-          return self.request(method=method, uri=location, 
+          return self.request(method=method, uri=location,
                               auth_token=auth_token, http_request=http_request,
                               converter=converter, desired_class=desired_class,
                               redirects_remaining=redirects_remaining-1,
@@ -380,7 +383,7 @@ class GDClient(atom.client.AtomPubClient):
                        'https://www.google.com/accounts/ClientLogin'),
                    captcha_token=None, captcha_response=None):
     """Performs an auth request using the user's email address and password.
-    
+
     In order to modify user specific data and read user private data, your
     application must be authorized by the user. One way to demonstrage
     authorization is by including a Client Login token in the Authorization
@@ -392,8 +395,8 @@ class GDClient(atom.client.AtomPubClient):
     object will be set in the client's auth_token member. With the auth_token
     set, future requests from this client will include the Client Login
     token.
-    
-    For a list of service names, see 
+
+    For a list of service names, see
     http://code.google.com/apis/gdata/faq.html#clientlogin
     For more information on Client Login, see:
     http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html
@@ -493,7 +496,7 @@ class GDClient(atom.client.AtomPubClient):
   def revoke_token(self, token=None, url=atom.http_core.Uri.parse_uri(
       'https://www.google.com/accounts/AuthSubRevokeToken')):
     """Requests that the token be invalidated.
-    
+
     This method can be used for both AuthSub and OAuth tokens (to invalidate
     a ClientLogin token, the user must change their password).
 
@@ -733,7 +736,7 @@ class GDClient(atom.client.AtomPubClient):
 
   def delete(self, entry_or_uri, auth_token=None, force=False, **kwargs):
     http_request = atom.http_core.HttpRequest()
-      
+
     # Include the ETag in the request if present.
     if force:
       http_request.headers['If-Match'] = '*'
@@ -742,7 +745,7 @@ class GDClient(atom.client.AtomPubClient):
 
     # If the user passes in a URL, just delete directly, may not work as
     # the service might require an ETag.
-    if isinstance(entry_or_uri, (str, unicode, atom.http_core.Uri)):
+    if isinstance(entry_or_uri, (str, six.text_type, atom.http_core.Uri)):
       return self.request(method='DELETE', uri=entry_or_uri,
                           http_request=http_request, auth_token=auth_token,
                           **kwargs)
@@ -952,7 +955,7 @@ class ResumableUploader(object):
       resumable_media_link: str The full URL for the #resumable-create-media or
           #resumable-edit-media link for starting a resumable upload request or
           updating media using a resumable PUT.
-      entry: A (optional) gdata.data.GDEntry containging metadata to create the 
+      entry: A (optional) gdata.data.GDEntry containging metadata to create the
           upload from.
       headers: dict (optional) Additional headers to send in the initial request
           to create the resumable upload request. These headers will override
@@ -974,7 +977,7 @@ class ResumableUploader(object):
       incomplete.
     """
     http_request = atom.http_core.HttpRequest()
-    
+
     # Send empty body if Atom XML wasn't specified.
     if entry is None:
       http_request.add_body_part('', self.content_type, size=0)
@@ -1037,7 +1040,7 @@ class ResumableUploader(object):
                                      http_request=http_request,
                                      desired_class=self.desired_class)
       return response
-    except RequestError, error:
+    except RequestError as error:
       if error.status == 308:
         return None
       else:
@@ -1055,7 +1058,7 @@ class ResumableUploader(object):
     Args:
       resumable_media_link: str The full URL for the #resumable-create-media for
           starting a resumable upload request.
-      entry: A (optional) gdata.data.GDEntry containging metadata to create the 
+      entry: A (optional) gdata.data.GDEntry containging metadata to create the
           upload from.
       headers: dict Additional headers to send in the initial request to create
           the resumable upload request. These headers will override any default
@@ -1183,7 +1186,7 @@ class ResumableUploader(object):
       else:
         raise error_from_response(
             '%s returned by server' % response.status, response, RequestError)
-    except RequestError, error:
+    except RequestError as error:
       if error.status == 308:
         for pair in error.headers:
           if pair[0].capitalize() == 'Range':
