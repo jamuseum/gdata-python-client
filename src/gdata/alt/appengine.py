@@ -34,7 +34,7 @@ import six
 __author__ = 'api.jscudder (Jeff Scudder)'
 
 
-import StringIO
+from six import StringIO
 import pickle
 import atom.http_interface
 import atom.token_store

@@ -20,7 +20,7 @@ __author__ = 'api.jscudder (Jeff Scudder)'
 
 import unittest
 import atom.http_interface
-import StringIO
+from six import StringIO
 
 
 class HttpResponseTest(unittest.TestCase):

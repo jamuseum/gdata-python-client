@@ -38,7 +38,7 @@ HttpRequest: Function that wraps google.appengine.api.urlfetch.Fetch in a
 __author__ = 'api.jscudder (Jeff Scudder)'
 
 
-import StringIO
+from six import StringIO
 import atom.service
 import atom.http_interface
 from google.appengine.api import urlfetch

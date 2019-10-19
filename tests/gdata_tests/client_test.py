@@ -26,7 +26,7 @@ import gdata.client
 import gdata.gauth
 import gdata.data
 import atom.mock_http_core
-import StringIO
+from six import StringIO
 
 
 class ClientLoginTest(unittest.TestCase):

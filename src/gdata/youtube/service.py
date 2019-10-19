@@ -636,7 +636,7 @@ class YouTubeService(gdata.service.GDataService):
       mediasource = gdata.MediaSource()
       mediasource.setFile(filename_or_handle, content_type)
     elif hasattr(filename_or_handle, 'read'):
-      import StringIO
+      from six import StringIO
       if hasattr(filename_or_handle, 'seek'):
         filename_or_handle.seek(0)
       file_handle = filename_or_handle

@@ -16,7 +16,7 @@
 
 
 from __future__ import absolute_import
-import StringIO
+from six import StringIO
 import gdata
 import gdata.service
 import gdata.spreadsheet

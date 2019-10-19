@@ -25,7 +25,7 @@ __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
 import os
-import StringIO
+from six import StringIO
 import six.moves.urllib.parse
 import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import six.moves.http_client

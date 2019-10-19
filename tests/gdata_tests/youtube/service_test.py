@@ -18,7 +18,7 @@ __author__ = 'api.jhartmann@gmail.com (Jochen Hartmann)'
 
 import getpass
 import time
-import StringIO
+from six import StringIO
 import random
 import unittest
 import atom

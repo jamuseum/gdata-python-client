@@ -19,7 +19,7 @@ __author__ = 'api.jscudder (Jeffrey Scudder)'
 import getpass
 import time
 import unittest
-import StringIO
+from six import StringIO
 import gdata.photos.service
 import gdata.photos
 import atom

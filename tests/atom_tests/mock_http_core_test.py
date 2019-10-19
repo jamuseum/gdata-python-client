@@ -23,7 +23,7 @@ __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
 import unittest
-import StringIO
+from six import StringIO
 import os.path
 import atom.mock_http_core
 import atom.http_core

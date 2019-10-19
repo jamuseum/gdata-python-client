@@ -20,7 +20,7 @@ __author__ = ('api.jfisher (Jeff Fisher), '
 import getpass
 import os
 import re
-import StringIO
+from six import StringIO
 import time
 import unittest
 
