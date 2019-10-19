@@ -149,10 +149,10 @@ class YouTubeServiceTest(unittest.TestCase):
     # Set Geo location to 37,-122 lat, long
     where = gdata.geo.Where()
     where.set_location((37.0,-122.0))
-    
+
     video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group,
                                                   geo=where)
-    
+
     self.assert_(isinstance(video_entry, gdata.youtube.YouTubeVideoEntry))
 
     new_entry = self.client.InsertVideoEntry(video_entry, video_file_location)
@@ -202,7 +202,7 @@ class YouTubeServiceTest(unittest.TestCase):
 
     test_developer_tag_01 = 'tag' + str(random.randint(1000,5000))
     test_developer_tag_02 = 'tag' + str(random.randint(1000,5000))
-    test_developer_tag_03 = 'tag' + str(random.randint(1000,5000)) 
+    test_developer_tag_03 = 'tag' + str(random.randint(1000,5000))
 
     my_media_group = gdata.media.Group(
       title = gdata.media.Title(text=test_video_title),
@@ -225,7 +225,7 @@ class YouTubeServiceTest(unittest.TestCase):
     dev_tags = video_entry.AddDeveloperTags(original_developer_tags)
 
     for dev_tag in dev_tags:
-      self.assert_(dev_tag.text in original_developer_tags) 
+      self.assert_(dev_tag.text in original_developer_tags)
 
     self.assert_(isinstance(video_entry, gdata.youtube.YouTubeVideoEntry))
 
@@ -238,7 +238,7 @@ class YouTubeServiceTest(unittest.TestCase):
 
     developer_tags_from_new_entry = new_entry.GetDeveloperTags()
     for dev_tag in developer_tags_from_new_entry:
-      self.assert_(dev_tag.text in original_developer_tags) 
+      self.assert_(dev_tag.text in original_developer_tags)
 
     self.assertEquals(len(developer_tags_from_new_entry),
         len(original_developer_tags))

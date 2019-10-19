@@ -30,11 +30,11 @@ import atom.http_core
 
 
 class EchoClientTest(unittest.TestCase):
-  
+
   def test_echo_response(self):
     client = atom.mock_http_core.EchoHttpClient()
     # Send a bare-bones POST request.
-    request = atom.http_core.HttpRequest(method='POST', 
+    request = atom.http_core.HttpRequest(method='POST',
         uri=atom.http_core.Uri(host='www.jeffscudder.com', path='/'))
     request.add_body_part('hello world!', 'text/plain')
     response = client.request(request)
@@ -48,19 +48,18 @@ class EchoClientTest(unittest.TestCase):
     self.assert_(response.read() == 'hello world!')
 
     # Test a path of None should default to /
-    request = atom.http_core.HttpRequest(method='POST', 
+    request = atom.http_core.HttpRequest(method='POST',
         uri=atom.http_core.Uri(host='www.jeffscudder.com', path=None))
     response = client.request(request)
     self.assert_(response.getheader('Echo-Host') == 'www.jeffscudder.com:None')
     self.assert_(response.getheader('Echo-Method') == 'POST')
     self.assert_(response.getheader('Echo-Uri') == '/')
-    
 
     # Send a multipart request.
     request = atom.http_core.HttpRequest(method='POST',
-        uri=atom.http_core.Uri(scheme='https', host='www.jeffscudder.com', 
-                               port=8080, path='/multipart', 
-                               query={'test': 'true', 'happy': 'yes'}), 
+        uri=atom.http_core.Uri(scheme='https', host='www.jeffscudder.com',
+                               port=8080, path='/multipart',
+                               query={'test': 'true', 'happy': 'yes'}),
         headers={'Authorization':'Test xyzzy', 'Testing':'True'})
     request.add_body_part('start', 'text/plain')
     request.add_body_part(StringIO('<html><body>hi</body></html>'),
@@ -84,8 +83,8 @@ class EchoClientTest(unittest.TestCase):
                      '\r\n--%s\r\n'
                      'Content-Type: text/javascript\r\n\r\n'
                      'alert("Greetings!")'
-                     '\r\n--%s--') % (atom.http_core.MIME_BOUNDARY, 
-        atom.http_core.MIME_BOUNDARY, atom.http_core.MIME_BOUNDARY, 
+                     '\r\n--%s--') % (atom.http_core.MIME_BOUNDARY,
+        atom.http_core.MIME_BOUNDARY, atom.http_core.MIME_BOUNDARY,
         atom.http_core.MIME_BOUNDARY,)
     self.assert_(response.read() == expected_body)
     self.assert_(response.getheader('Content-Length') == str(
@@ -127,7 +126,7 @@ class MockHttpClientTest(unittest.TestCase):
   def test_use_recordings(self):
     request = atom.http_core.HttpRequest(method='GET')
     atom.http_core.parse_uri('http://www.google.com/').modify_request(request)
-    self.client._load_or_use_client('test_use_recordings', 
+    self.client._load_or_use_client('test_use_recordings',
         atom.http_core.HttpClient())
     response = self.client.request(request)
     if self.client.real_client:
@@ -168,7 +167,7 @@ class MockHttpClientTest(unittest.TestCase):
     self.assertEqual(response.getheader('Echo-Method'), 'GET')
     self.assertEqual(response.getheader('Echo-Host'), 'example.com:None')
     # We will insert a Cache-Marker header to indicate that this is a
-    # recorded response, but initially it should not be present. 
+    # recorded response, but initially it should not be present.
     self.assertEqual(response.getheader('Cache-Marker'), None)
     # Modify the recorded response to allow us to identify a cached result
     # from an echoed result. We need to be able to check to see if this
@@ -183,7 +182,7 @@ class MockHttpClientTest(unittest.TestCase):
     client = atom.mock_http_core.MockHttpClient()
     client.use_cached_session('mock_http_test.test_use_named_sessions',
                               atom.mock_http_core.EchoHttpClient())
-    # Make the same request, which should use the recorded result. 
+    # Make the same request, which should use the recorded result.
     response = client.request(request)
     self.assertEqual(response.getheader('Echo-Method'), 'GET')
     self.assertEqual(response.getheader('Echo-Host'), 'example.com:None')

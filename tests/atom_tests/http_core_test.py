@@ -42,7 +42,7 @@ class UriTest(unittest.TestCase):
     self.assertEqual(uri.host, 'test.com')
     self.assert_(uri.port is None)
     self.assertEqual(uri.query, {'token':'foo', 'x':'1'})
-    
+
   def test_modify_request_no_request(self):
     uri = atom.http_core.parse_uri('http://www.google.com/test?q=foo&z=bar')
     request = uri.modify_request()
@@ -56,17 +56,17 @@ class UriTest(unittest.TestCase):
     self.assert_(request.method is None)
     self.assert_(request.headers == {})
     self.assert_(request._body_parts == [])
-    
+
   def test_modify_request_http_with_set_port(self):
     request = atom.http_core.HttpRequest(uri=atom.http_core.Uri(port=8080),
                                          method='POST')
-    request.add_body_part('hello', 'text/plain') 
+    request.add_body_part('hello', 'text/plain')
     uri = atom.http_core.parse_uri('//example.com/greet')
     self.assert_(uri.query == {})
     self.assert_(uri._get_relative_path() == '/greet')
     self.assert_(uri.host == 'example.com')
     self.assert_(uri.port is None)
-    
+
     uri.ModifyRequest(request)
     self.assert_(request.uri.host == 'example.com')
     # If no scheme was provided, the URI will not add one, but the HttpClient
@@ -76,7 +76,7 @@ class UriTest(unittest.TestCase):
     self.assert_(request.uri.path == '/greet')
     self.assert_(request.method == 'POST')
     self.assert_(request.headers['Content-Type'] == 'text/plain')
-    
+
   def test_modify_request_use_default_ssl_port(self):
     request = atom.http_core.HttpRequest(
         uri=atom.http_core.Uri(scheme='https'), method='PUT')
@@ -85,7 +85,7 @@ class UriTest(unittest.TestCase):
     uri.modify_request(request)
     self.assert_(request.uri.host is None)
     self.assert_(request.uri.scheme == 'https')
-    # If no port was provided, leave the port as None, it is up to the 
+    # If no port was provided, leave the port as None, it is up to the
     # HttpClient to set the correct default port.
     self.assert_(request.uri.port is None)
     self.assert_(request.uri.path == '/greet')
@@ -153,7 +153,7 @@ def suite():
   return unittest.TestSuite((unittest.makeSuite(UriTest,'test'),
                              unittest.makeSuite(HttpRequestTest,'test')))
 
- 
+
 if __name__ == '__main__':
   unittest.main()
 

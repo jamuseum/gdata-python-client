@@ -20,13 +20,13 @@
       an interface identical to httplib.HTTPResponse which is the response
       expected from higher level classes which use HttpClient.request.
 
-  GenericHttpClient: Provides an interface (superclass) for an object 
+  GenericHttpClient: Provides an interface (superclass) for an object
       responsible for making HTTP requests. Subclasses of this object are
       used in AtomService and GDataService to make requests to the server. By
       changing the http_client member object, the AtomService is able to make
-      HTTP requests using different logic (for example, when running on 
+      HTTP requests using different logic (for example, when running on
       Google App Engine, the http_client makes requests using the App Engine
-      urlfetch API). 
+      urlfetch API).
 """
 
 
@@ -50,11 +50,11 @@ class UnparsableUrlObject(Error):
 
 class ContentLengthRequired(Error):
   pass
-  
+
 
 class HttpResponse(object):
   def __init__(self, body=None, status=None, reason=None, headers=None):
-    """Constructor for an HttpResponse object. 
+    """Constructor for an HttpResponse object.
 
     HttpResponse represents the server's response to an HTTP request from
     the client. The HttpClient.request method returns a httplib.HTTPResponse
@@ -90,7 +90,7 @@ class HttpResponse(object):
       return self._headers[name]
     else:
       return default
-    
+
   def read(self, amt=None):
     if not amt:
       return self._body.read()
@@ -103,13 +103,13 @@ class GenericHttpClient(object):
 
   def __init__(self, http_client, headers=None):
     """
-    
+
     Args:
-      http_client: An object which provides a request method to make an HTTP 
-          request. The request method in GenericHttpClient performs a 
+      http_client: An object which provides a request method to make an HTTP
+          request. The request method in GenericHttpClient performs a
           call-through to the contained HTTP client object.
       headers: A dictionary containing HTTP headers which should be included
-          in every HTTP request. Common persistent headers include 
+          in every HTTP request. Common persistent headers include
           'User-Agent'.
     """
     self.http_client = http_client
@@ -119,7 +119,7 @@ class GenericHttpClient(object):
     all_headers = self.headers.copy()
     if headers:
       all_headers.update(headers)
-    return self.http_client.request(operation, url, data=data, 
+    return self.http_client.request(operation, url, data=data,
         headers=all_headers)
 
   def get(self, url, headers=None):
@@ -137,20 +137,20 @@ class GenericHttpClient(object):
 
 class GenericToken(object):
   """Represents an Authorization token to be added to HTTP requests.
-  
+
   Some Authorization headers included calculated fields (digital
   signatures for example) which are based on the parameters of the HTTP
   request. Therefore the token is responsible for signing the request
-  and adding the Authorization header. 
+  and adding the Authorization header.
   """
-  def perform_request(self, http_client, operation, url, data=None, 
+  def perform_request(self, http_client, operation, url, data=None,
                       headers=None):
     """For the GenericToken, no Authorization token is set."""
     return http_client.request(operation, url, data=data, headers=headers)
 
   def valid_for_scope(self, url):
     """Tells the caller if the token authorizes access to the desired URL.
-    
+
     Since the generic token doesn't add an auth header, it is not valid for
     any scope.
     """
