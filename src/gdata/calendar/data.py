@@ -18,6 +18,7 @@
 """Contains the data classes of the Google Calendar Data API"""
 
 
+from __future__ import absolute_import
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 

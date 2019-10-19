@@ -17,6 +17,7 @@
 
 """Contains extensions to Atom objects used by Google Codesearch"""
 
+from __future__ import absolute_import
 __author__ = 'Benoit Chesneau'
 
 

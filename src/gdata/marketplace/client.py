@@ -22,11 +22,12 @@ to retrieve License informations for an application in the Google Apps Marketpla
 """
 
 
+from __future__ import absolute_import
 __author__ = 'Alexandre Vivien <alex@simplecode.fr>'
 
 import gdata.marketplace.data
 import gdata.client
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 
 # Feed URI template.  This must end with a /
@@ -76,9 +77,9 @@ class LicensingClient(gdata.client.GDClient):
       Apps domain.
     """
     parameters = '[appid=%s][domain=%s]' % (app_id, self.domain)
-    uri = LICENSE_FEED_TEMPLATE + urllib.quote_plus(parameters)
+    uri = LICENSE_FEED_TEMPLATE + six.moves.urllib.parse.quote_plus(parameters)
     if params:
-      uri += '&' + urllib.urlencode(params)
+      uri += '&' + six.moves.urllib.parse.urlencode(params)
     return uri
 
   MakeLicenseFeedUri = make_license_feed_uri
@@ -108,9 +109,9 @@ class LicensingClient(gdata.client.GDClient):
       parameters += '[max-results=%s]' % max_results
     else:
       parameters += '[max-results=100]'
-    uri = LICENSE_NOTIFICATIONS_FEED_TEMPLATE + urllib.quote_plus(parameters)
+    uri = LICENSE_NOTIFICATIONS_FEED_TEMPLATE + six.moves.urllib.parse.quote_plus(parameters)
     if params:
-      uri += '&' + urllib.urlencode(params)
+      uri += '&' + six.moves.urllib.parse.urlencode(params)
     return uri
 
   MakeLicenseNotificationsFeedUri = make_license_notifications_feed_uri

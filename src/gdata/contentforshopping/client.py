@@ -18,10 +18,11 @@
 """Extend the gdata client for the Content API for Shopping."""
 
 
+from __future__ import absolute_import
 __author__ = 'afshar (Ali Afshar), dhermes (Daniel Hermes)'
 
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 import atom.data
 import gdata.client
@@ -78,7 +79,7 @@ class ContentForShoppingClient(gdata.client.GDClient):
     segments = [self.cfs_uri, self.cfs_api_version, account_id, resource]
     if use_projection:
       segments.append(CFS_PROJECTION)
-    segments.extend(urllib.quote(value) for value in path)
+    segments.extend(six.moves.urllib.parse.quote(value) for value in path)
     result = '/'.join(segments)
 
     request_params = []

@@ -22,6 +22,7 @@
 
 """Contains extensions to Atom objects used with Google Analytics."""
 
+from __future__ import absolute_import
 __author__ = 'api.suryasev (Sal Uryasev)'
 
 import atom

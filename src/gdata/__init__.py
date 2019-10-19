@@ -20,6 +20,7 @@
 """
 
 
+from __future__ import absolute_import
 __author__ = 'j.s@google.com (Jeffrey Scudder)'
 
 import os

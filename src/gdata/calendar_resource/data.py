@@ -17,6 +17,8 @@
 """Data model for parsing and generating XML for the Calendar Resource API."""
 
 
+from __future__ import absolute_import
+from six.moves import range
 __author__ = 'Vic Fryzel <vf@google.com>'
 
 

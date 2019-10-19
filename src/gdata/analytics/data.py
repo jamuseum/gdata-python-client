@@ -23,6 +23,7 @@ The Management API supports 5 feeds all using the same ManagementFeed
 data class.
 """
 
+from __future__ import absolute_import
 __author__ = 'api.nickm@google.com (Nick Mihailovski)'
 
 

@@ -23,6 +23,7 @@ to be reused across requests. It is up to your own code to ensure that the
 token key's are unique.
 """
 
+from __future__ import absolute_import
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 

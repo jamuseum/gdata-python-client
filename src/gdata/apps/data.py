@@ -17,6 +17,7 @@
 """Data model classes for the Provisioning API."""
 
 
+from __future__ import absolute_import
 __author__ = 'Shraddha Gupta shraddhag@google.com>'
 
 

@@ -45,6 +45,7 @@ media:thumbnail
 media:title
 """
 
+from __future__ import absolute_import
 __author__ = u'havard@gulldahl.no'# (Håvard Gulldahl)' #BUG: api chokes on non-ascii chars in __author__
 __license__ = 'Apache License v2'
 

@@ -24,10 +24,11 @@ and update and retrieve users in organization units.
 """
 
 
+from __future__ import absolute_import
 __author__ = 'Gunjan Sharma <gunjansharma@google.com>'
 
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import gdata.apps.organization.data
 import gdata.client
 
@@ -99,7 +100,7 @@ class OrganizationUnitProvisioningClient(gdata.client.GDClient):
     if org_unit_path_or_user_email:
       uri += '/' + org_unit_path_or_user_email
     if params:
-      uri += '?' + urllib.urlencode(params)
+      uri += '?' + six.moves.urllib.parse.urlencode(params)
     return uri
 
   MakeOrganizationUnitProvisioningUri = make_organization_unit_provisioning_uri

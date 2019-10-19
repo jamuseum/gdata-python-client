@@ -17,6 +17,7 @@
 """Data model classes for the Organization Unit Provisioning API."""
 
 
+from __future__ import absolute_import
 __author__ = 'Gunjan Sharma <gunjansharma@google.com>'
 
 

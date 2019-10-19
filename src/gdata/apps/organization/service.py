@@ -19,6 +19,7 @@
   OrganizationService: Provides methods to manage organization unit and organization user.
 """
 
+from __future__ import absolute_import
 __author__ = 'Alexandre Vivien (alex@simplecode.fr)'
 
 
