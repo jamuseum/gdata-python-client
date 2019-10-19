@@ -22,6 +22,8 @@ http://code.google.com/apis/spreadsheets/
 """
 
 
+from __future__ import absolute_import
+import six
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
@@ -200,7 +202,7 @@ class SpreadsheetsClient(gdata.client.GDClient):
     data = gdata.spreadsheets.data.Data(
         insertion_mode=insertion_mode, num_rows=str(num_rows),
         start_row=str(start_row))
-    for index, name in column_headers.iteritems():
+    for index, name in six.iteritems(column_headers):
       data.column.append(gdata.spreadsheets.data.Column(
           index=index, name=name))
     new_table = gdata.spreadsheets.data.Table(
@@ -265,7 +267,7 @@ class SpreadsheetsClient(gdata.client.GDClient):
     new_record = gdata.spreadsheets.data.Record()
     if title is not None:
       new_record.title = atom.data.Title(text=title)
-    for name, value in fields.iteritems():
+    for name, value in six.iteritems(fields):
       new_record.field.append(gdata.spreadsheets.data.Field(
           name=name, text=value))
     return self.post(new_record, RECORDS_URL % (spreadsheet_key, table_id),

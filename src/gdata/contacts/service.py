@@ -24,6 +24,7 @@
                          utility function used in CRUD operations.
 """
 
+from __future__ import absolute_import
 __author__ = 'dbrattli (Dag Brattli)'
 
 

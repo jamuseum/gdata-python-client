@@ -23,10 +23,11 @@ domains.
 """
 
 
+from __future__ import absolute_import
 __author__ = 'Claudio Cherubino <ccherubino@google.com>'
 
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import gdata.apps.multidomain.data
 import gdata.client
 
@@ -97,7 +98,7 @@ class MultiDomainProvisioningClient(gdata.client.GDClient):
     if email:
       uri += '/' + email
     if params:
-      uri += '?' + urllib.urlencode(params)
+      uri += '?' + six.moves.urllib.parse.urlencode(params)
     return uri
 
   MakeMultidomainProvisioningUri = make_multidomain_provisioning_uri

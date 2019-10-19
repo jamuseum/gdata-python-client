@@ -16,6 +16,8 @@
 """Contains extensions to Atom objects used with Google Spreadsheets.
 """
 
+from __future__ import absolute_import
+import six
 __author__ = 'api.laurabeth@gmail.com (Laura Beth Lincoln)'
 
 
@@ -142,7 +144,7 @@ class Custom(atom.AtomBase):
     # Fill in the instance members from the contents of the XML tree.
     for child in tree:
       self._ConvertElementTreeToMember(child)
-    for attribute, value in tree.attrib.iteritems():
+    for attribute, value in six.iteritems(tree.attrib):
       self._ConvertElementAttributeToMember(attribute, value)
     self.text = tree.text
 
@@ -318,7 +320,7 @@ class SpreadsheetsList(gdata.GDataEntry):
   # convert custom attributes to members
   def _ConvertElementTreeToMember(self, child_tree):
     # Find the element's tag in this class's list of child members
-    if self.__class__._children.has_key(child_tree.tag):
+    if child_tree.tag in self.__class__._children:
       member_name = self.__class__._children[child_tree.tag][0]
       member_class = self.__class__._children[child_tree.tag][1]
       # If the class member is supposed to contain a list, make sure the
@@ -348,7 +350,7 @@ class SpreadsheetsList(gdata.GDataEntry):
     # This uses the class's _children dictionary to find the members which
     # should become XML child nodes.
     member_node_names = [values[0] for tag, values in 
-                                       self.__class__._children.iteritems()]
+                                       six.iteritems(self.__class__._children)]
     for member_name in member_node_names:
       member = getattr(self, member_name)
       if member is None:
@@ -359,12 +361,12 @@ class SpreadsheetsList(gdata.GDataEntry):
       else:
         member._BecomeChildElement(tree)
     # Convert the members of this class which are XML attributes.
-    for xml_attribute, member_name in self.__class__._attributes.iteritems():
+    for xml_attribute, member_name in six.iteritems(self.__class__._attributes):
       member = getattr(self, member_name)
       if member is not None:
         tree.attrib[xml_attribute] = member
     # Convert all special custom item attributes to nodes
-    for name, custom in self.custom.iteritems():
+    for name, custom in six.iteritems(self.custom):
       custom._BecomeChildElement(tree)
     # Lastly, call the ExtensionContainers's _AddMembersToElementTree to 
     # convert any extension attributes.

@@ -5,6 +5,7 @@ requires tlslite - http://trevp.net/tlslite/
 
 """
 
+from __future__ import absolute_import
 import binascii
 
 from tlslite.utils import keyfactory

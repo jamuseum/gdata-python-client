@@ -18,6 +18,8 @@
 # This module is used for version 2 of the Google Data APIs.
 
 
+from __future__ import absolute_import
+import six
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
@@ -51,7 +53,7 @@ def _convert_to_jsonc(x):
     # Recursively transform all members of the dict.
     # When converting a dict, we do not convert _name items into private
     # Jsonc members.
-    for key, value in x.iteritems():
+    for key, value in six.iteritems(x):
       jsonc_obj._dict[key] = _convert_to_jsonc(value)
     return jsonc_obj
   elif isinstance(x, list):
@@ -112,7 +114,7 @@ def _convert_to_object(jsonc_obj):
 
   if isinstance(jsonc_obj, Jsonc):
     plain = {}
-    for key, value in jsonc_obj._dict.iteritems():
+    for key, value in six.iteritems(jsonc_obj._dict):
       plain[key] = _convert_to_object(value)
     return plain
   elif isinstance(jsonc_obj, list):
@@ -232,7 +234,7 @@ class Jsonc(object):
 
   def __init__(self, _dict=None, **kwargs):
     json = _dict or {}
-    for key, value in kwargs.iteritems():
+    for key, value in six.iteritems(kwargs):
       if key.startswith('_'):
         object.__setattr__(self, key, value)
       else:

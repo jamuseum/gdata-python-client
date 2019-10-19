@@ -15,6 +15,7 @@
 
 """Contains extensions to Atom objects used with Google Documents."""
 
+from __future__ import absolute_import
 __author__ = ('api.jfisher (Jeff Fisher), '
               'api.eric@google.com (Eric Bidelman)')
 

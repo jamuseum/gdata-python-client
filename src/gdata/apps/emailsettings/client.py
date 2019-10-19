@@ -25,10 +25,11 @@ settings.
 """
 
 
+from __future__ import absolute_import
 __author__ = 'Claudio Cherubino <ccherubino@google.com>'
 
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 
 import gdata.apps.emailsettings.data
 import gdata.client
@@ -181,7 +182,7 @@ class EmailSettingsClient(gdata.client.GDClient):
     """
     uri = self.MakeEmailSettingsUri(username=username,
                                     setting_id=SETTING_ID_LABEL)
-    uri = '/'.join([uri, urllib.quote_plus(label)])
+    uri = '/'.join([uri, six.moves.urllib.parse.quote_plus(label)])
     return self.delete(uri, **kwargs)
   
   DeleteLabel = delete_label

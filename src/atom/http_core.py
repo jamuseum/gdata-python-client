@@ -19,14 +19,16 @@
 # TODO: add proxy handling.
 
 
+from __future__ import absolute_import
+import six
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
 import os
 import StringIO
-import urlparse
-import urllib
-import httplib
+import six.moves.urllib.parse
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
+import six.moves.http_client
 ssl = None
 try:
   import ssl
@@ -97,7 +99,7 @@ class HttpRequest(object):
     self._body_parts = []
     if method is not None:
       self.method = method
-    if isinstance(uri, (str, unicode)):
+    if isinstance(uri, (str, six.text_type)):
       uri = Uri.parse_uri(uri)
     self.uri = uri or Uri()
 
@@ -184,7 +186,7 @@ class HttpRequest(object):
       mime_type: str The MIME type of the form data being sent. Defaults
                  to 'application/x-www-form-urlencoded'.
     """
-    body = urllib.urlencode(form_data)
+    body = six.moves.urllib.parse.urlencode(form_data)
     self.add_body_part(body, mime_type)
 
   AddFormInputs = add_form_inputs
@@ -206,12 +208,12 @@ class HttpRequest(object):
     """
     output =  'HTTP Request\n  method: %s\n  url: %s\n  headers:\n' % (
         self.method, str(self.uri))
-    for header, value in self.headers.iteritems():
+    for header, value in six.iteritems(self.headers):
       output += '    %s: %s\n' % (header, value)
     output += '  body sections:\n'
     i = 0
     for part in self._body_parts:
-      if isinstance(part, (str, unicode)):
+      if isinstance(part, (str, six.text_type)):
         output += '    %s: %s\n' % (i, part)
       else:
         output += '    %s: <file like object>\n' % i
@@ -260,12 +262,12 @@ class Uri(object):
 
   def _get_query_string(self):
     param_pairs = []
-    for key, value in self.query.iteritems():
-      quoted_key = urllib.quote_plus(str(key))
+    for key, value in six.iteritems(self.query):
+      quoted_key = six.moves.urllib.parse.quote_plus(str(key))
       if value is None:
         param_pairs.append(quoted_key)
       else:
-        quoted_value = urllib.quote_plus(str(value))
+        quoted_value = six.moves.urllib.parse.quote_plus(str(value))
         param_pairs.append('%s=%s' % (quoted_key, quoted_value))
     return '&'.join(param_pairs)
 
@@ -329,7 +331,7 @@ class Uri(object):
     This method can accept partial URIs, but it will leave missing
     members of the Uri unset.
     """
-    parts = urlparse.urlparse(uri_string)
+    parts = six.moves.urllib.parse.urlparse(uri_string)
     uri = Uri()
     if parts[0]:
       uri.scheme = parts[0]
@@ -346,10 +348,10 @@ class Uri(object):
       for pair in param_pairs:
         pair_parts = pair.split('=')
         if len(pair_parts) > 1:
-          uri.query[urllib.unquote_plus(pair_parts[0])] = (
-              urllib.unquote_plus(pair_parts[1]))
+          uri.query[six.moves.urllib.parse.unquote_plus(pair_parts[0])] = (
+              six.moves.urllib.parse.unquote_plus(pair_parts[1]))
         elif len(pair_parts) == 1:
-          uri.query[urllib.unquote_plus(pair_parts[0])] = None
+          uri.query[six.moves.urllib.parse.unquote_plus(pair_parts[0])] = None
     return uri
 
   parse_uri = staticmethod(parse_uri)
@@ -407,7 +409,7 @@ def _dump_response(http_response):
       http_response.status, http_response.reason)
   headers = get_headers(http_response)
   if isinstance(headers, dict):
-    for header, value in headers.iteritems():
+    for header, value in six.iteritems(headers):
       output += '    %s: %s\n' % (header, value)
   else:
     for pair in headers:
@@ -436,14 +438,14 @@ class HttpClient(object):
     connection = None
     if uri.scheme == 'https':
       if not uri.port:
-        connection = httplib.HTTPSConnection(uri.host)
+        connection = six.moves.http_client.HTTPSConnection(uri.host)
       else:
-        connection = httplib.HTTPSConnection(uri.host, int(uri.port))
+        connection = six.moves.http_client.HTTPSConnection(uri.host, int(uri.port))
     else:
       if not uri.port:
-        connection = httplib.HTTPConnection(uri.host)
+        connection = six.moves.http_client.HTTPConnection(uri.host)
       else:
-        connection = httplib.HTTPConnection(uri.host, int(uri.port))
+        connection = six.moves.http_client.HTTPConnection(uri.host, int(uri.port))
     return connection
 
   def _http_request(self, method, uri, headers=None, body_parts=None):
@@ -458,7 +460,7 @@ class HttpClient(object):
                   which can be converted to strings using str. Each of these
                   will be sent in order as the body of the HTTP request.
     """
-    if isinstance(uri, (str, unicode)):
+    if isinstance(uri, (str, six.text_type)):
       uri = Uri.parse_uri(uri)
 
     connection = self._get_connection(uri, headers=headers)
@@ -488,12 +490,12 @@ class HttpClient(object):
         pass
 
     # Send the HTTP headers.
-    for header_name, value in headers.iteritems():
+    for header_name, value in six.iteritems(headers):
       connection.putheader(header_name, value)
     connection.endheaders()
 
     # If there is data, send it in the request.
-    if body_parts and filter(lambda x: x != '', body_parts):
+    if body_parts and [x for x in body_parts if x != '']:
       for part in body_parts:
         _send_data_part(part, connection)
 
@@ -502,7 +504,7 @@ class HttpClient(object):
 
 
 def _send_data_part(data, connection):
-  if isinstance(data, (str, unicode)):
+  if isinstance(data, (str, six.text_type)):
     # I might want to just allow str, not unicode.
     connection.send(data)
     return
@@ -570,9 +572,9 @@ class ProxiedHttpClient(HttpClient):
         sslobj = ssl.wrap_socket(p_sock, None, None)
       else:
         sock_ssl = socket.ssl(p_sock, None, Nonesock_)
-        sslobj = httplib.FakeSocket(p_sock, sock_ssl)
+        sslobj = six.moves.http_client.FakeSocket(p_sock, sock_ssl)
       # Initalize httplib and replace with the proxy socket.
-      connection = httplib.HTTPConnection(proxy_uri.host)
+      connection = six.moves.http_client.HTTPConnection(proxy_uri.host)
       connection.sock = sslobj
       return connection
     elif uri.scheme == 'http':
@@ -581,7 +583,7 @@ class ProxiedHttpClient(HttpClient):
         proxy_uri.port = '80'
       if proxy_auth:
         headers['Proxy-Authorization'] = proxy_auth.strip()
-      return httplib.HTTPConnection(proxy_uri.host, int(proxy_uri.port))
+      return six.moves.http_client.HTTPConnection(proxy_uri.host, int(proxy_uri.port))
     return None
 
 

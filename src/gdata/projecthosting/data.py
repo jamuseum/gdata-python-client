@@ -25,6 +25,7 @@ found here: http://code.google.com/p/support/wiki/IssueTrackerAPI
 """
 
 
+from __future__ import absolute_import
 __author__ = 'jlapenna@google.com (Joe LaPenna)'
 
 import atom.core

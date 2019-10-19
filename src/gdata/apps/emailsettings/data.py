@@ -17,6 +17,8 @@
 """Data model classes for the Email Settings API."""
 
 
+from __future__ import absolute_import
+from six.moves import range
 __author__ = 'Claudio Cherubino <ccherubino@google.com>'
 
 

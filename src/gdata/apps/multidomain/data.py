@@ -17,6 +17,7 @@
 """Data model classes for the Multidomain Provisioning API."""
 
 
+from __future__ import absolute_import
 __author__ = 'Claudio Cherubino <ccherubino@google.com>'
 
 

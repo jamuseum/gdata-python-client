@@ -23,6 +23,7 @@
 
 # __author__ = 's.@google.com (John Skidgel)'
 
+from __future__ import absolute_import
 import logging
 
 import gdata.client

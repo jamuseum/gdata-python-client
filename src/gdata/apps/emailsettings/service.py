@@ -19,6 +19,8 @@
   EmailSettingsService: Set various email settings.
 """
 
+from __future__ import absolute_import
+import six
 __author__ = 'google-apps-apis@googlegroups.com'
 
 
@@ -235,7 +237,7 @@ class EmailSettingsService(gdata.apps.service.PropertyService):
     return self._PutProperties(uri, properties)
 
   def UpdateGeneral(self, username, page_size=None, shortcuts=None, arrows=None,
-                    snippets=None, unicode=None):
+                    snippets=None, six.text_type=None):
     """Update general settings.
 
     Args:
@@ -259,6 +261,6 @@ class EmailSettingsService(gdata.apps.service.PropertyService):
       properties['arrows'] = gdata.apps.service._bool2str(arrows)
     if snippets != None:
       properties['snippets'] = gdata.apps.service._bool2str(snippets)
-    if unicode != None:
-      properties['unicode'] = gdata.apps.service._bool2str(unicode)
+    if six.text_type != None:
+      properties['unicode'] = gdata.apps.service._bool2str(six.text_type)
     return self._PutProperties(uri, properties)

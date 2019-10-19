@@ -25,6 +25,7 @@ http://code.google.com/apis/gdata/docs/2.0/elements.html
 """
 
 
+from __future__ import absolute_import
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 

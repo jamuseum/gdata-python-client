@@ -16,6 +16,7 @@
 
 """Classes to interact with the Blogger server."""
 
+from __future__ import absolute_import
 __author__ = 'api.jscudder (Jeffrey Scudder)'
 
 import gdata.service

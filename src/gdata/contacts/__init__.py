@@ -16,6 +16,7 @@
 
 """Contains extensions to ElementWrapper objects used with Google Contacts."""
 
+from __future__ import absolute_import
 __author__ = 'dbrattli (Dag Brattli)'
 
 

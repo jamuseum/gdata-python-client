@@ -18,6 +18,7 @@
 # This module is used for version 2 of the Google Data APIs.
 
 
+from __future__ import absolute_import
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 

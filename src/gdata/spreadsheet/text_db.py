@@ -15,6 +15,7 @@
 # limitations under the License.
 
 
+from __future__ import absolute_import
 import StringIO
 import gdata
 import gdata.service
@@ -22,6 +23,7 @@ import gdata.spreadsheet
 import gdata.spreadsheet.service
 import gdata.docs
 import gdata.docs.service
+import six
 
 
 """Make the Google Documents API feel more like using a database.
@@ -503,7 +505,7 @@ class Record(object):
     self.content = {}
     if entry:
       self.row_id = entry.id.text.split('/')[-1]
-      for label, custom in entry.custom.iteritems():
+      for label, custom in six.iteritems(entry.custom):
         self.content[label] = custom.text
 
   def Push(self):

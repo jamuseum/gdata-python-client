@@ -22,10 +22,11 @@ ability to create, retrieve, update and delete groups.
 """
 
 
+from __future__ import absolute_import
 __author__ = 'Shraddha gupta <shraddhag@google.com>'
 
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import gdata.apps.groups.data
 import gdata.client
 
@@ -95,7 +96,7 @@ class GroupsProvisioningClient(gdata.client.GDClient):
     if member_id:
       uri += '/' + member_id
     if params:
-      uri += '?' + urllib.urlencode(params)
+      uri += '?' + six.moves.urllib.parse.urlencode(params)
     return uri
 
   MakeGroupProvisioningUri = make_group_provisioning_uri

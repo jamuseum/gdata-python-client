@@ -46,12 +46,15 @@ ae_save
 """
 
 
+from __future__ import absolute_import
 import datetime
 import time
 import random
-import urllib
-import urlparse
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
+import six.moves.urllib.parse
 import atom.http_core
+import six
+from six.moves import range
 
 try:
   import simplejson
@@ -66,7 +69,7 @@ except ImportError:
     import json as simplejson
 
 try:
-    from urlparse import parse_qsl
+    from six.moves.urllib.parse import parse_qsl
 except ImportError:
     from cgi import parse_qsl
 
@@ -216,7 +219,7 @@ def generate_client_login_request_body(email, password, service, source,
     # user is responding to a captch challenge.
     request_fields['logintoken'] = captcha_token
     request_fields['logincaptcha'] = captcha_response
-  return urllib.urlencode(request_fields)
+  return six.moves.urllib.parse.urlencode(request_fields)
 
 
 GenerateClientLoginRequestBody = generate_client_login_request_body
@@ -301,7 +304,7 @@ class ClientLoginToken(object):
 
 # AuthSub functions and classes.
 def _to_uri(str_or_uri):
-  if isinstance(str_or_uri, (str, unicode)):
+  if isinstance(str_or_uri, (str, six.text_type)):
     return atom.http_core.Uri.parse_uri(str_or_uri)
   return str_or_uri
 
@@ -350,16 +353,16 @@ def generate_auth_sub_url(next, scopes, secure=False, session=True,
     An atom.http_core.Uri which the user's browser should be directed to in
     order to authorize this application to access their information.
   """
-  if isinstance(next, (str, unicode)):
+  if isinstance(next, (str, six.text_type)):
     next = atom.http_core.Uri.parse_uri(next)
   # If the user passed in a string instead of a list for scopes, convert to
   # a single item tuple.
-  if isinstance(scopes, (str, unicode, atom.http_core.Uri)):
+  if isinstance(scopes, (str, six.text_type, atom.http_core.Uri)):
     scopes = (scopes,)
   scopes_string = ' '.join([str(scope) for scope in scopes])
   next.query[scopes_param_prefix] = scopes_string
 
-  if isinstance(request_url, (str, unicode)):
+  if isinstance(request_url, (str, six.text_type)):
     request_url = atom.http_core.Uri.parse_uri(request_url)
   request_url.query['next'] = str(next)
   request_url.query['scope'] = scopes_string
@@ -400,7 +403,7 @@ def auth_sub_string_from_url(url, scopes_param_prefix='auth_sub_scopes'):
     None. If there was no token param in the url, the tuple returned is
     (None, None)
   """
-  if isinstance(url, (str, unicode)):
+  if isinstance(url, (str, six.text_type)):
     url = atom.http_core.Uri.parse_uri(url)
   if 'token' not in url.query:
     return (None, None)
@@ -551,7 +554,7 @@ class SecureAuthSubToken(AuthSubToken):
           not be valid.
     """
     timestamp = str(int(time.time()))
-    nonce = ''.join([str(random.randint(0, 9)) for i in xrange(15)])
+    nonce = ''.join([str(random.randint(0, 9)) for i in range(15)])
     data = build_auth_sub_data(http_request, timestamp, nonce)
     signature = generate_signature(data, self.rsa_private_key)
     http_request.headers['Authorization'] = (
@@ -615,14 +618,14 @@ def build_oauth_base_string(http_request, consumer_key, nonce, signaure_type,
     sorted_keys = sorted(params.keys())
   # The sorted function is not available in Python2.3 and lower
   except NameError:
-    sorted_keys = params.keys()
+    sorted_keys = list(params.keys())
     sorted_keys.sort()
   pairs = []
   for key in sorted_keys:
-    pairs.append('%s=%s' % (urllib.quote(key, safe='~'),
-                            urllib.quote(params[key], safe='~')))
+    pairs.append('%s=%s' % (six.moves.urllib.parse.quote(key, safe='~'),
+                            six.moves.urllib.parse.quote(params[key], safe='~')))
   # We want to escape /'s too, so use safe='~'
-  all_parameters = urllib.quote('&'.join(pairs), safe='~')
+  all_parameters = six.moves.urllib.parse.quote('&'.join(pairs), safe='~')
   normailzed_host = http_request.uri.host.lower()
   normalized_scheme = (http_request.uri.scheme or 'http').lower()
   non_default_port = None
@@ -637,12 +640,12 @@ def build_oauth_base_string(http_request, consumer_key, nonce, signaure_type,
   if non_default_port is not None:
     # Set the only safe char in url encoding to ~ since we want to escape /
     # as well.
-    request_path = urllib.quote('%s://%s:%s%s' % (
+    request_path = six.moves.urllib.parse.quote('%s://%s:%s%s' % (
         normalized_scheme, normailzed_host, non_default_port, path), safe='~')
   else:
     # Set the only safe char in url encoding to ~ since we want to escape /
     # as well.
-    request_path = urllib.quote('%s://%s%s' % (
+    request_path = six.moves.urllib.parse.quote('%s://%s%s' % (
         normalized_scheme, normailzed_host, path), safe='~')
   # TODO: ensure that token escaping logic is correct, not sure if the token
   # value should be double escaped instead of single.
@@ -663,10 +666,10 @@ def generate_hmac_signature(http_request, consumer_key, consumer_secret,
   hash_key = None
   hashed = None
   if token_secret is not None:
-    hash_key = '%s&%s' % (urllib.quote(consumer_secret, safe='~'),
-                          urllib.quote(token_secret, safe='~'))
+    hash_key = '%s&%s' % (six.moves.urllib.parse.quote(consumer_secret, safe='~'),
+                          six.moves.urllib.parse.quote(token_secret, safe='~'))
   else:
-    hash_key = '%s&' % urllib.quote(consumer_secret, safe='~')
+    hash_key = '%s&' % six.moves.urllib.parse.quote(consumer_secret, safe='~')
   try:
     import hashlib
     hashed = hmac.new(hash_key, base_string, hashlib.sha1)
@@ -734,7 +737,7 @@ def generate_auth_header(consumer_key, timestamp, nonce, signature_type,
     params['oauth_verifier'] = verifier
   pairs = [
       '%s="%s"' % (
-          k, urllib.quote(v, safe='~')) for k, v in params.iteritems()]
+          k, six.moves.urllib.parse.quote(v, safe='~')) for k, v in six.iteritems(params)]
   return 'OAuth %s' % (', '.join(pairs))
 
 
@@ -777,7 +780,7 @@ def generate_request_for_request_token(
     request.uri.query['scope'] = ' '.join(scopes)
 
   timestamp = str(int(time.time()))
-  nonce = ''.join([str(random.randint(0, 9)) for i in xrange(15)])
+  nonce = ''.join([str(random.randint(0, 9)) for i in range(15)])
   signature = None
   if signature_type == HMAC_SHA1:
     signature = generate_hmac_signature(
@@ -831,9 +834,9 @@ def oauth_token_info_from_body(http_body):
   token_secret = None
   for pair in http_body.split('&'):
     if pair.startswith('oauth_token='):
-      token = urllib.unquote(pair[len('oauth_token='):])
+      token = six.moves.urllib.parse.unquote(pair[len('oauth_token='):])
     if pair.startswith('oauth_token_secret='):
-      token_secret = urllib.unquote(pair[len('oauth_token_secret='):])
+      token_secret = six.moves.urllib.parse.unquote(pair[len('oauth_token_secret='):])
   return (token, token_secret)
 
 
@@ -902,14 +905,14 @@ def oauth_token_info_from_url(url):
     A tuple of strings containing the OAuth token and the OAuth verifier which
     need to sent when upgrading a request token to an access token.
   """
-  if isinstance(url, (str, unicode)):
+  if isinstance(url, (str, six.text_type)):
     url = atom.http_core.Uri.parse_uri(url)
   token = None
   verifier = None
   if 'oauth_token' in url.query:
-    token = urllib.unquote(url.query['oauth_token'])
+    token = six.moves.urllib.parse.unquote(url.query['oauth_token'])
   if 'oauth_verifier' in url.query:
-    verifier = urllib.unquote(url.query['oauth_verifier'])
+    verifier = six.moves.urllib.parse.unquote(url.query['oauth_verifier'])
   return (token, verifier)
 
 
@@ -1028,7 +1031,7 @@ class OAuthHmacToken(object):
       The same HTTP request object which was passed in.
     """
     timestamp = str(int(time.time()))
-    nonce = ''.join([str(random.randint(0, 9)) for i in xrange(15)])
+    nonce = ''.join([str(random.randint(0, 9)) for i in range(15)])
     signature = generate_hmac_signature(
         http_request, self.consumer_key, self.consumer_secret, timestamp,
         nonce, version='1.0', next=self.next, token=self.token,
@@ -1066,7 +1069,7 @@ class OAuthRsaToken(OAuthHmacToken):
       The same HTTP request object which was passed in.
     """
     timestamp = str(int(time.time()))
-    nonce = ''.join([str(random.randint(0, 9)) for i in xrange(15)])
+    nonce = ''.join([str(random.randint(0, 9)) for i in range(15)])
     signature = generate_rsa_signature(
         http_request, self.consumer_key, self.rsa_private_key, timestamp,
         nonce, version='1.0', next=self.next, token=self.token,
@@ -1192,7 +1195,7 @@ class OAuth2Token(object):
       request: The atom.http_core.HttpRequest which contains all of the
           information needed to send a request to the remote server.
     """
-    body = urllib.urlencode({
+    body = six.moves.urllib.parse.urlencode({
       'grant_type': 'refresh_token',
       'client_id': self.client_id,
       'client_secret': self.client_secret,
@@ -1261,10 +1264,10 @@ class OAuth2Token(object):
       'access_type': access_type
       }
     query.update(kwargs)
-    parts = list(urlparse.urlparse(self.auth_uri))
+    parts = list(six.moves.urllib.parse.urlparse(self.auth_uri))
     query.update(dict(parse_qsl(parts[4]))) # 4 is the index of the query part
-    parts[4] = urllib.urlencode(query)
-    return urlparse.urlunparse(parts)
+    parts[4] = six.moves.urllib.parse.urlencode(query)
+    return six.moves.urllib.parse.urlunparse(parts)
 
   def get_access_token(self, code):
     """Exhanges a code for an access token.
@@ -1275,10 +1278,10 @@ class OAuth2Token(object):
         the code.
     """
 
-    if not (isinstance(code, str) or isinstance(code, unicode)):
+    if not (isinstance(code, str) or isinstance(code, six.text_type)):
       code = code['code']
 
-    body = urllib.urlencode({
+    body = six.moves.urllib.parse.urlencode({
       'grant_type': 'authorization_code',
       'client_id': self.client_id,
       'client_secret': self.client_secret,
@@ -1484,7 +1487,7 @@ def _join_token_parts(*args):
   Returns:
     A string in the form 1x|member1|member2|member3...
   """
-  return '|'.join([urllib.quote_plus(a or '') for a in args])
+  return '|'.join([six.moves.urllib.parse.quote_plus(a or '') for a in args])
 
 
 def _split_token_parts(blob):
@@ -1502,7 +1505,7 @@ def _split_token_parts(blob):
   Returns:
     A list of unescaped strings.
   """
-  return [urllib.unquote_plus(part) or None for part in blob.split('|')]
+  return [six.moves.urllib.parse.unquote_plus(part) or None for part in blob.split('|')]
 
 
 def token_to_blob(token):
@@ -1639,7 +1642,7 @@ def find_scopes_for_services(service_names=None):
   """
   result_scopes = []
   if service_names is None:
-    for service_name, scopes in AUTH_SCOPES.iteritems():
+    for service_name, scopes in six.iteritems(AUTH_SCOPES):
       result_scopes.extend(scopes)
   else:
     for service_name in service_names:

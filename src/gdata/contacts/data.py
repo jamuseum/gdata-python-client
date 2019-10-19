@@ -17,6 +17,7 @@
 """Data model classes for parsing and generating XML for the Contacts API."""
 
 
+from __future__ import absolute_import
 __author__ = 'vinces1979@gmail.com (Vince Spicer)'
 
 

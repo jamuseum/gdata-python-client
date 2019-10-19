@@ -17,6 +17,7 @@
 """Contains the data classes of the Dublin Core Metadata Initiative (DCMI) Extension"""
 
 
+from __future__ import absolute_import
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 

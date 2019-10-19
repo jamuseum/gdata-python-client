@@ -15,13 +15,14 @@
 # limitations under the License.
 
 
+from __future__ import absolute_import
 import cgi
 import math
 import random
 import re
 import time
 import types
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import atom.http_interface
 import atom.token_store
 import atom.url
@@ -31,6 +32,7 @@ from tlslite.utils import keyfactory
 from base64 import encodestring
 
 import gdata.gauth
+import six
 
 __author__ = 'api.jscudder (Jeff Scudder)'
 
@@ -257,7 +259,7 @@ def GenerateOAuthAuthorizationUrl(
       callback_url += '&'
     else:
       callback_url += '?'
-    callback_url += urllib.urlencode({scopes_param_prefix:scopes})  
+    callback_url += six.moves.urllib.parse.urlencode({scopes_param_prefix:scopes})  
   oauth_token = oauth.OAuthToken(request_token.key, request_token.secret)
   oauth_request = oauth.OAuthRequest.from_token_and_callback(
       token=oauth_token, callback=callback_url,
@@ -336,7 +338,7 @@ def GenerateAuthSubUrl(next, scope, secure=False, session=True,
   else:
     session = 0
 
-  request_params = urllib.urlencode({'next': next, 'scope': scope,
+  request_params = six.moves.urllib.parse.urlencode({'next': next, 'scope': scope,
                                      'secure': secure, 'session': session, 
                                      'hd': domain})
   if request_url.find('?') == -1:
@@ -385,12 +387,12 @@ def generate_auth_sub_url(next, scopes, secure=False, session=True,
     An atom.url.Url which the user's browser should be directed to in order
     to authorize this application to access their information.
   """
-  if isinstance(next, (str, unicode)):
+  if isinstance(next, (str, six.text_type)):
     next = atom.url.parse_url(next)
   scopes_string = ' '.join([str(scope) for scope in scopes])
   next.params[scopes_param_prefix] = scopes_string
 
-  if isinstance(request_url, (str, unicode)):
+  if isinstance(request_url, (str, six.text_type)):
     request_url = atom.url.parse_url(request_url)
   request_url.params['next'] = str(next)
   request_url.params['scope'] = scopes_string
@@ -465,7 +467,7 @@ def extract_auth_sub_token_from_url(url,
     the AuthSubToken defaults to being valid for no scopes. If there was no
     'token' parameter in the URL, this function returns None.
   """
-  if isinstance(url, (str, unicode)):
+  if isinstance(url, (str, six.text_type)):
     url = atom.url.parse_url(url)
   if 'token' not in url.params:
     return None
@@ -551,7 +553,7 @@ def OAuthTokenFromUrl(url, scopes_param_prefix='oauth_token_scope'):
     the OAuthToken defaults to being valid for no scopes. If there was no
     'oauth_token' parameter in the URL, this function returns None.
   """
-  if isinstance(url, (str, unicode)):
+  if isinstance(url, (str, six.text_type)):
     url = atom.url.parse_url(url)
   if 'oauth_token' not in url.params:
     return None
@@ -734,12 +736,12 @@ class ClientLoginToken(atom.http_interface.GenericToken):
   def valid_for_scope(self, url):
     """Tells the caller if the token authorizes access to the desired URL.
     """
-    if isinstance(url, (str, unicode)):
+    if isinstance(url, (str, six.text_type)):
       url = atom.url.parse_url(url)
     for scope in self.scopes:
       if scope == atom.token_store.SCOPE_ALL:
         return True
-      if isinstance(scope, (str, unicode)):
+      if isinstance(scope, (str, six.text_type)):
         scope = atom.url.parse_url(scope)
       if scope == url:
         return True
@@ -804,7 +806,7 @@ class OAuthToken(atom.http_interface.GenericToken):
       oauth_token_secret=[1]. If both are absent, it returns None.
     """
     if self.key and self.secret:
-      return urllib.urlencode({'oauth_token': self.key,
+      return six.moves.urllib.parse.urlencode({'oauth_token': self.key,
                                'oauth_token_secret': self.secret})
     elif self.key:
       return 'oauth_token=%s' % self.key
@@ -841,7 +843,7 @@ class OAuthToken(atom.http_interface.GenericToken):
       dict Header to be sent with every subsequent request after
       authentication.
     """
-    if isinstance(http_url, types.StringTypes):
+    if isinstance(http_url, (str,)):
       http_url = atom.url.parse_url(http_url)
     header = None
     token = None
@@ -868,12 +870,12 @@ class OAuthToken(atom.http_interface.GenericToken):
     return http_client.request(operation, url, data=data, headers=headers)
     
   def valid_for_scope(self, url):
-    if isinstance(url, (str, unicode)):
+    if isinstance(url, (str, six.text_type)):
       url = atom.url.parse_url(url)
     for scope in self.scopes:
       if scope == atom.token_store.SCOPE_ALL:
         return True
-      if isinstance(scope, (str, unicode)):
+      if isinstance(scope, (str, six.text_type)):
         scope = atom.url.parse_url(scope)
       if scope == url:
         return True

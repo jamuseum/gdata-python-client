@@ -17,6 +17,7 @@
 """Data model for parsing and generating XML for the Google Apps Marketplace Licensing API."""
 
 
+from __future__ import absolute_import
 __author__ = 'Alexandre Vivien <alex@simplecode.fr>'
 
 

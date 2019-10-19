@@ -16,6 +16,7 @@
 
 """Streamlines requests to the Google Analytics APIs."""
 
+from __future__ import absolute_import
 __author__ = 'api.nickm@google.com (Nick Mihailovski)'
 
 

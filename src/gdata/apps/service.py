@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+import six
 __author__ = 'tmatsuo@sios.com (Takashi MATSUO)'
 
 try:
@@ -25,7 +27,7 @@ except ImportError:
       from xml.etree import ElementTree
     except ImportError:
       from elementtree import ElementTree
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import gdata
 import atom.service
 import gdata.service
@@ -127,7 +129,7 @@ class AppsService(gdata.service.GDataService):
     try:
       return gdata.apps.EmailListFeedFromString(str(self.GetWithRetries(
             uri, num_retries=num_retries, delay=delay, backoff=backoff)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
     
   def GetGeneratorForAllEmailLists(
@@ -156,7 +158,7 @@ class AppsService(gdata.service.GDataService):
       self._baseURL(), API_VER, list_name)
     try:
       return self.Get(uri, converter=gdata.apps.EmailListEntryFromString)
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def RetrieveEmailLists(self, recipient):
@@ -166,7 +168,7 @@ class AppsService(gdata.service.GDataService):
       self._baseURL(), API_VER, recipient)
     try:
       ret = gdata.apps.EmailListFeedFromString(str(self.Get(uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
     
     # pagination
@@ -180,7 +182,7 @@ class AppsService(gdata.service.GDataService):
       self._baseURL(), API_VER, list_name, recipient)
     try:
       self.Delete(uri)
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def RetrievePageOfRecipients(self, list_name, start_recipient=None,
@@ -198,7 +200,7 @@ class AppsService(gdata.service.GDataService):
       return gdata.apps.EmailListRecipientFeedFromString(str(
           self.GetWithRetries(
             uri, num_retries=num_retries, delay=delay, backoff=backoff)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def GetGeneratorForAllRecipients(
@@ -232,7 +234,7 @@ class AppsService(gdata.service.GDataService):
     try:
       return gdata.apps.EmailListRecipientEntryFromString(
         str(self.Post(recipient_entry, uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def DeleteEmailList(self, list_name):
@@ -241,7 +243,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/emailList/%s/%s" % (self._baseURL(), API_VER, list_name)
     try:
       self.Delete(uri)
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def CreateEmailList(self, list_name):
@@ -253,7 +255,7 @@ class AppsService(gdata.service.GDataService):
     try: 
       return gdata.apps.EmailListEntryFromString(
         str(self.Post(email_list_entry, uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def DeleteNickname(self, nickname):
@@ -262,7 +264,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/nickname/%s/%s" % (self._baseURL(), API_VER, nickname)
     try:
       self.Delete(uri)
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def RetrievePageOfNicknames(self, start_nickname=None,
@@ -277,7 +279,7 @@ class AppsService(gdata.service.GDataService):
     try:
       return gdata.apps.NicknameFeedFromString(str(self.GetWithRetries(
             uri, num_retries=num_retries, delay=delay, backoff=backoff)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def GetGeneratorForAllNicknames(
@@ -307,7 +309,7 @@ class AppsService(gdata.service.GDataService):
     try:
       first_page = gdata.apps.NicknameFeedFromString(str(self.GetWithRetries(
             uri, num_retries=num_retries, delay=delay, backoff=backoff)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
     return self.GetGeneratorFromLinkFinder(
       first_page, gdata.apps.NicknameFeedFromString, num_retries=num_retries,
@@ -319,7 +321,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/nickname/%s?username=%s" % (self._baseURL(), API_VER, user_name)
     try:
       ret = gdata.apps.NicknameFeedFromString(str(self.Get(uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
     # pagination
@@ -339,7 +341,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/nickname/%s/%s" % (self._baseURL(), API_VER, nickname)
     try:
       return gdata.apps.NicknameEntryFromString(str(self.Get(uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def CreateNickname(self, user_name, nickname):
@@ -353,7 +355,7 @@ class AppsService(gdata.service.GDataService):
     try: 
       return gdata.apps.NicknameEntryFromString(
         str(self.Post(nickname_entry, uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def DeleteUser(self, user_name):
@@ -362,7 +364,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/user/%s/%s" % (self._baseURL(), API_VER, user_name)
     try:
       return self.Delete(uri)
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def UpdateUser(self, user_name, user_entry):
@@ -371,7 +373,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/user/%s/%s" % (self._baseURL(), API_VER, user_name)
     try: 
       return gdata.apps.UserEntryFromString(str(self.Put(user_entry, uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def CreateUser(self, user_name, family_name, given_name, password,
@@ -393,7 +395,7 @@ class AppsService(gdata.service.GDataService):
 
     try: 
       return gdata.apps.UserEntryFromString(str(self.Post(user_entry, uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def SuspendUser(self, user_name):
@@ -423,7 +425,7 @@ class AppsService(gdata.service.GDataService):
     uri = "%s/user/%s/%s" % (self._baseURL(), API_VER, user_name)
     try:
       return gdata.apps.UserEntryFromString(str(self.Get(uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def RetrievePageOfUsers(self, start_username=None,
@@ -438,7 +440,7 @@ class AppsService(gdata.service.GDataService):
     try:
       return gdata.apps.UserFeedFromString(str(self.GetWithRetries(
           uri, num_retries=num_retries, delay=delay, backoff=backoff)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise AppsForYourDomainException(e.args[0])
 
   def GetGeneratorForAllUsers(self,
@@ -487,7 +489,7 @@ class PropertyService(gdata.service.GDataService):
   def _GetPropertyEntry(self, properties):
     property_entry = gdata.apps.PropertyEntry()
     property = []
-    for name, value in properties.iteritems():
+    for name, value in six.iteritems(properties):
       if name is not None and value is not None:
         property.append(gdata.apps.Property(name=name, value=value))
     property_entry.property = property
@@ -502,7 +504,7 @@ class PropertyService(gdata.service.GDataService):
   def _GetPropertyFeed(self, uri):
     try:
       return gdata.apps.PropertyFeedFromString(str(self.Get(uri)))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise gdata.apps.service.AppsForYourDomainException(e.args[0])
 
   def _GetPropertiesList(self, uri):
@@ -519,7 +521,7 @@ class PropertyService(gdata.service.GDataService):
     try:
       return self._PropertyEntry2Dict(gdata.apps.PropertyEntryFromString(
         str(self.Get(uri))))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise gdata.apps.service.AppsForYourDomainException(e.args[0])
 
   def _PostProperties(self, uri, properties):
@@ -527,7 +529,7 @@ class PropertyService(gdata.service.GDataService):
     try:
       return self._PropertyEntry2Dict(gdata.apps.PropertyEntryFromString(
         str(self.Post(property_entry, uri))))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise gdata.apps.service.AppsForYourDomainException(e.args[0])
 
   def _PutProperties(self, uri, properties):
@@ -535,13 +537,13 @@ class PropertyService(gdata.service.GDataService):
     try:
       return self._PropertyEntry2Dict(gdata.apps.PropertyEntryFromString(
         str(self.Put(property_entry, uri))))
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise gdata.apps.service.AppsForYourDomainException(e.args[0])
 
   def _DeleteProperties(self, uri):
     try:
       self.Delete(uri)
-    except gdata.service.RequestError, e:
+    except gdata.service.RequestError as e:
       raise gdata.apps.service.AppsForYourDomainException(e.args[0])
 
 

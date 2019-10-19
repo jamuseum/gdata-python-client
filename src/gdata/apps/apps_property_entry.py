@@ -17,6 +17,8 @@
 """Generic class for Set/Get properties of GData Provisioning clients."""
 
 
+from __future__ import absolute_import
+from six.moves import range
 __author__ = 'Gunjan Sharma <gunjansharma@google.com>'
 
 

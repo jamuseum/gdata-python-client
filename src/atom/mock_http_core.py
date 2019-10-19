@@ -18,6 +18,8 @@
 # This module is used for version 2 of the Google Data APIs.
 
 
+from __future__ import absolute_import
+import six
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
@@ -258,7 +260,7 @@ class EchoHttpClient(object):
       # Copy headers from the request to the response but convert values to
       # strings. Server response headers always come in as strings, so an int
       # should be converted to a corresponding string when echoing.
-      for header, value in headers.iteritems():
+      for header, value in six.iteritems(headers):
         response._headers[header] = str(value)
     response._headers['Echo-Host'] = '%s:%s' % (uri.host, str(uri.port))
     response._headers['Echo-Uri'] = uri._get_relative_path()

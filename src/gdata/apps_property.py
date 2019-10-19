@@ -25,6 +25,7 @@ in this module is AppsProperty.
 """
 
 
+from __future__ import absolute_import
 __author__ = 'Vic Fryzel <vicfryzel@google.com>'
 
 

@@ -18,6 +18,7 @@
 """GData definitions for Content API for Shopping"""
 
 
+from __future__ import absolute_import
 __author__ = 'afshar (Ali Afshar), dhermes (Daniel Hermes)'
 
 

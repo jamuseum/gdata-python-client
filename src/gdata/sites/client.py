@@ -17,6 +17,7 @@
 """SitesClient extends gdata.client.GDClient to streamline Sites API calls."""
 
 
+from __future__ import absolute_import
 __author__ = 'e.bidelman (Eric Bidelman)'
 
 import atom.data
@@ -102,9 +103,9 @@ class SitesClient(gdata.client.GDClient):
     """
     server_response = self.request('GET', uri)
     if server_response.status != 200:
-      raise  gdata.client.RequestError, {'status': server_response.status,
+      raise  gdata.client.RequestError({'status': server_response.status,
                                          'reason': server_response.reason,
-                                         'body': server_response.read()}
+                                         'body': server_response.read()})
     return server_response.read()
 
   _GetFileContent = _get_file_content
@@ -471,7 +472,7 @@ class SitesClient(gdata.client.GDClient):
     f = open(file_path, 'wb')
     try:
       f.write(self._get_file_content(uri))
-    except gdata.client.RequestError, e:
+    except gdata.client.RequestError as e:
       f.close()
       raise e
     f.flush()

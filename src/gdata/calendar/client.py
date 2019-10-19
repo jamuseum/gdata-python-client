@@ -25,10 +25,11 @@
 """
 
 
+from __future__ import absolute_import
 __author__ = 'alainv (Alain Vongsouvanh)'
 
 
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import gdata.client
 import gdata.calendar.data
 import atom.data

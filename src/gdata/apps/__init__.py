@@ -15,6 +15,7 @@
 
 """Contains objects used with Google Apps."""
 
+from __future__ import absolute_import
 __author__ = 'tmatsuo@sios.com (Takashi MATSUO)'
 
 

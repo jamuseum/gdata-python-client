@@ -25,6 +25,8 @@ http://code.google.com/apis/spreadsheets/docs/3.0/reference.html#Elements
 """
 
 
+from __future__ import absolute_import
+import six
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
@@ -306,7 +308,7 @@ class ListEntry(gdata.data.GDEntry):
     Old values which are already in the entry will not be removed unless
     they are overwritten with new values from the dict.
     """
-    for column, value in values.iteritems():
+    for column, value in six.iteritems(values):
       self.set_value(column, value)
 
 
