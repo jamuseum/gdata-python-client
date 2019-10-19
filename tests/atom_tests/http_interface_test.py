@@ -20,13 +20,13 @@ __author__ = 'api.jscudder (Jeff Scudder)'
 
 import unittest
 import atom.http_interface
-import StringIO
+from six import StringIO
 
 
 class HttpResponseTest(unittest.TestCase):
 
   def testConstructorWithStrings(self):
-    resp = atom.http_interface.HttpResponse(body='Hi there!', status=200, 
+    resp = atom.http_interface.HttpResponse(body='Hi there!', status=200,
         reason='OK', headers={'Content-Length':'9'})
     self.assertEqual(resp.read(amt=1), 'H')
     self.assertEqual(resp.read(amt=2), 'i ')

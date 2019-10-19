@@ -26,14 +26,14 @@ import gdata.client
 import gdata.gauth
 import gdata.data
 import atom.mock_http_core
-import StringIO
+from six import StringIO
 
 
 class ClientLoginTest(unittest.TestCase):
 
   def test_token_request(self):
     client = gdata.client.GDClient()
-    client.http_client = atom.mock_http_core.SettableHttpClient(200, 'OK', 
+    client.http_client = atom.mock_http_core.SettableHttpClient(200, 'OK',
         'SID=DQAAAGgA...7Zg8CTN\n'
         'LSID=DQAAAGsA...lk8BBbG\n'
         'Auth=DQAAAGgA...dk3fA5N', {'Content-Type': 'text/plain'})
@@ -53,7 +53,7 @@ class ClientLoginTest(unittest.TestCase):
         client.request_client_login_token, 'email', 'pw', '', '')
 
     # Test a CAPTCHA challenge from the server
-    client.http_client.set_response(403, 'Access Forbidden', 
+    client.http_client.set_response(403, 'Access Forbidden',
         'Url=http://www.google.com/login/captcha\n'
         'Error=CaptchaRequired\n'
         'CaptchaToken=DQAAAGgA...dkI1LK9\n'
@@ -65,7 +65,7 @@ class ClientLoginTest(unittest.TestCase):
       self.fail('should raise a CaptchaChallenge on a 403 with a '
                 'CaptchRequired error.')
     except gdata.client.CaptchaChallenge, challenge:
-      self.assertEquals(challenge.captcha_url, 
+      self.assertEquals(challenge.captcha_url,
           'http://www.google.com/accounts/'
           'Captcha?ctoken=HiteT4bVoP6-yFkHPibe7O9EqxeiI7lUSN')
       self.assertEquals(challenge.captcha_token, 'DQAAAGgA...dkI1LK9')
@@ -77,7 +77,7 @@ class ClientLoginTest(unittest.TestCase):
 
   def test_client_login(self):
     client = gdata.client.GDClient()
-    client.http_client = atom.mock_http_core.SettableHttpClient(200, 'OK', 
+    client.http_client = atom.mock_http_core.SettableHttpClient(200, 'OK',
         'SID=DQAAAGgA...7Zg8CTN\n'
         'LSID=DQAAAGsA...lk8BBbG\n'
         'Auth=DQAAAGgA...dk3fA5N', {'Content-Type': 'text/plain'})
@@ -90,7 +90,7 @@ class AuthSubTest(unittest.TestCase):
 
   def test_get_and_upgrade_token(self):
     client = gdata.client.GDClient()
-    client.http_client = atom.mock_http_core.SettableHttpClient(200, 'OK', 
+    client.http_client = atom.mock_http_core.SettableHttpClient(200, 'OK',
         'Token=UpgradedTokenVal\n'
         'Extra data', {'Content-Type': 'text/plain'})
 
@@ -244,9 +244,9 @@ class RequestTest(unittest.TestCase):
     client = gdata.client.GDClient()
     client.http_client = atom.mock_http_core.MockHttpClient()
     # Add the redirect response for the initial request.
-    first_request = atom.http_core.HttpRequest('http://example.com/1', 
+    first_request = atom.http_core.HttpRequest('http://example.com/1',
                                                'POST')
-    client.http_client.add_response(first_request, 302, None, 
+    client.http_client.add_response(first_request, 302, None,
         {'Location': 'http://example.com/1?gsessionid=12'})
     second_request = atom.http_core.HttpRequest(
         'http://example.com/1?gsessionid=12', 'POST')
@@ -259,7 +259,7 @@ class RequestTest(unittest.TestCase):
 
     redirect_loop_request = atom.http_core.HttpRequest(
         'http://example.com/2?gsessionid=loop', 'PUT')
-    client.http_client.add_response(redirect_loop_request, 302, None, 
+    client.http_client.add_response(redirect_loop_request, 302, None,
         {'Location': 'http://example.com/2?gsessionid=loop'})
     try:
       response = client.request(method='PUT', uri='http://example.com/2?gsessionid=loop')
@@ -271,11 +271,11 @@ class RequestTest(unittest.TestCase):
     client = gdata.client.GDClient()
     client.http_client = atom.mock_http_core.MockHttpClient()
     # Add the redirect response for the initial request.
-    first_request = atom.http_core.HttpRequest('http://example.com/1', 
+    first_request = atom.http_core.HttpRequest('http://example.com/1',
                                                'POST')
     # In some environments, notably App Engine, the HTTP headers which come
     # back from a server will be normalized to all lowercase.
-    client.http_client.add_response(first_request, 302, None, 
+    client.http_client.add_response(first_request, 302, None,
         {'location': 'http://example.com/1?gsessionid=12'})
     second_request = atom.http_core.HttpRequest(
         'http://example.com/1?gsessionid=12', 'POST')
@@ -294,10 +294,10 @@ class RequestTest(unittest.TestCase):
 
     def bad_converter(string):
       return 1
-  
+
     class TestClass(atom.core.XmlElement):
       _qname = '{http://www.w3.org/2005/Atom}entry'
-    
+
     client = gdata.client.GDClient()
     client.http_client = atom.mock_http_core.EchoHttpClient()
     test_entry = gdata.data.GDEntry()

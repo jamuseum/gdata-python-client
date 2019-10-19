@@ -16,7 +16,7 @@
 
 
 from __future__ import absolute_import
-import StringIO
+from six import StringIO
 import gdata
 import gdata.service
 import gdata.spreadsheet
@@ -87,14 +87,14 @@ class CaptchaRequired(Error):
 class DatabaseClient(object):
   """Allows creation and finding of Google Spreadsheets databases.
 
-  The DatabaseClient simplifies the process of creating and finding Google 
-  Spreadsheets and will talk to both the Google Spreadsheets API and the 
-  Google Documents List API. 
+  The DatabaseClient simplifies the process of creating and finding Google
+  Spreadsheets and will talk to both the Google Spreadsheets API and the
+  Google Documents List API.
   """
 
   def __init__(self, username=None, password=None):
-    """Constructor for a Database Client. 
-  
+    """Constructor for a Database Client.
+
     If the username and password are present, the constructor  will contact
     the Google servers to authenticate.
 
@@ -110,7 +110,7 @@ class DatabaseClient(object):
   def SetCredentials(self, username, password):
     """Attempts to log in to Google APIs using the provided credentials.
 
-    If the username or password are None, the client will not request auth 
+    If the username or password are None, the client will not request auth
     tokens.
 
     Args:
@@ -130,7 +130,7 @@ class DatabaseClient(object):
                             'DisplayUnlockCaptcha to unlock your account.')
       except gdata.service.BadAuthentication:
         raise BadCredentials('Username or password incorrect.')
-    
+
   def CreateDatabase(self, name):
     """Creates a new Google Spreadsheet with the desired name.
 
@@ -138,12 +138,12 @@ class DatabaseClient(object):
       name: str The title for the spreadsheet.
 
     Returns:
-      A Database instance representing the new spreadsheet. 
+      A Database instance representing the new spreadsheet.
     """
     # Create a Google Spreadsheet to form the foundation of this database.
     # Spreadsheet is created by uploading a file to the Google Documents
     # List API.
-    virtual_csv_file = StringIO.StringIO(',,,')
+    virtual_csv_file = StringIO(',,,')
     virtual_media_source = gdata.MediaSource(file_handle=virtual_csv_file, content_type='text/csv', content_length=3)
     db_entry = self.__docs_client.UploadSpreadsheet(virtual_media_source, name)
     return Database(spreadsheet_entry=db_entry, database_client=self)
@@ -155,7 +155,7 @@ class DatabaseClient(object):
     searching by name could yield multiple results.
 
     Args:
-      spreadsheet_key: str The unique key for the spreadsheet, this 
+      spreadsheet_key: str The unique key for the spreadsheet, this
           usually in the the form 'pk23...We' or 'o23...423.12,,,3'.
       name: str The title of the spreadsheets.
 
@@ -172,10 +172,10 @@ class DatabaseClient(object):
       db_feed = self.__docs_client.QueryDocumentListFeed(title_query.ToUri())
       matching_databases = []
       for entry in db_feed.entry:
-        matching_databases.append(Database(spreadsheet_entry=entry, 
+        matching_databases.append(Database(spreadsheet_entry=entry,
                                            database_client=self))
       return matching_databases
-    
+
   def _GetDocsClient(self):
     return self.__docs_client
 
@@ -193,9 +193,9 @@ class Database(object):
     """Constructor for a database object.
 
     Args:
-      spreadsheet_entry: gdata.docs.DocumentListEntry The 
+      spreadsheet_entry: gdata.docs.DocumentListEntry The
           Atom entry which represents the Google Spreadsheet. The
-          spreadsheet's key is extracted from the entry and stored as a 
+          spreadsheet's key is extracted from the entry and stored as a
           member.
       database_client: DatabaseClient A client which can talk to the
           Google Spreadsheets servers to perform operations on worksheets
@@ -223,8 +223,8 @@ class Database(object):
     """
     worksheet = self.client._GetSpreadsheetsClient().AddWorksheet(title=name,
         row_count=1, col_count=len(fields), key=self.spreadsheet_key)
-    return Table(name=name, worksheet_entry=worksheet, 
-        database_client=self.client, 
+    return Table(name=name, worksheet_entry=worksheet,
+        database_client=self.client,
         spreadsheet_key=self.spreadsheet_key, fields=fields)
 
   def GetTables(self, worksheet_id=None, name=None):
@@ -244,8 +244,8 @@ class Database(object):
     if worksheet_id:
       worksheet_entry = self.client._GetSpreadsheetsClient().GetWorksheetsFeed(
           self.spreadsheet_key, wksht_id=worksheet_id)
-      return [Table(name=worksheet_entry.title.text, 
-          worksheet_entry=worksheet_entry, database_client=self.client, 
+      return [Table(name=worksheet_entry.title.text,
+          worksheet_entry=worksheet_entry, database_client=self.client,
           spreadsheet_key=self.spreadsheet_key)]
     else:
       matching_tables = []
@@ -253,12 +253,12 @@ class Database(object):
       if name:
         query = gdata.spreadsheet.service.DocumentQuery()
         query.title = name
- 
+
       worksheet_feed = self.client._GetSpreadsheetsClient().GetWorksheetsFeed(
           self.spreadsheet_key, query=query)
       for entry in worksheet_feed.entry:
-        matching_tables.append(Table(name=entry.title.text, 
-            worksheet_entry=entry, database_client=self.client, 
+        matching_tables.append(Table(name=entry.title.text,
+            worksheet_entry=entry, database_client=self.client,
             spreadsheet_key=self.spreadsheet_key))
       return matching_tables
 
@@ -272,7 +272,7 @@ class Database(object):
 
 class Table(object):
 
-  def __init__(self, name=None, worksheet_entry=None, database_client=None, 
+  def __init__(self, name=None, worksheet_entry=None, database_client=None,
       spreadsheet_key=None, fields=None):
     self.name = name
     self.entry = worksheet_entry
@@ -286,8 +286,8 @@ class Table(object):
 
   def LookupFields(self):
     """Queries to find the column names in the first row of the worksheet.
-    
-    Useful when you have retrieved the table from the server and you don't 
+
+    Useful when you have retrieved the table from the server and you don't
     know the column names.
     """
     if self.entry:
@@ -302,14 +302,14 @@ class Table(object):
       # Get the next set of cells if needed.
       next_link = feed.GetNextLink()
       while next_link:
-        feed = self.client._GetSpreadsheetsClient().Get(next_link.href, 
+        feed = self.client._GetSpreadsheetsClient().Get(next_link.href,
             converter=gdata.spreadsheet.SpreadsheetsCellsFeedFromString)
         for entry in feed.entry:
           first_row_contents.append(entry.content.text)
         next_link = feed.GetNextLink()
       # Convert the contents of the cells to valid headers.
       self.fields = ConvertStringsToColumnHeaders(first_row_contents)
-    
+
   def SetFields(self, fields):
     """Changes the contents of the cells in the first row of this worksheet.
 
@@ -327,7 +327,7 @@ class Table(object):
     for column_name in fields:
       i = i + 1
       # TODO: speed this up by using a batch request to update cells.
-      self.client._GetSpreadsheetsClient().UpdateCell(1, i, column_name, 
+      self.client._GetSpreadsheetsClient().UpdateCell(1, i, column_name,
           self.spreadsheet_key, self.worksheet_id)
 
   def Delete(self):
@@ -341,23 +341,23 @@ class Table(object):
     """Adds a new row to this worksheet.
 
     Args:
-      data: dict of strings Mapping of string values to column names. 
+      data: dict of strings Mapping of string values to column names.
 
     Returns:
       Record which represents this row of the spreadsheet.
     """
-    new_row = self.client._GetSpreadsheetsClient().InsertRow(data, 
+    new_row = self.client._GetSpreadsheetsClient().InsertRow(data,
         self.spreadsheet_key, wksht_id=self.worksheet_id)
-    return Record(content=data, row_entry=new_row, 
+    return Record(content=data, row_entry=new_row,
         spreadsheet_key=self.spreadsheet_key, worksheet_id=self.worksheet_id,
         database_client=self.client)
 
   def GetRecord(self, row_id=None, row_number=None):
     """Gets a single record from the worksheet based on row ID or number.
-    
+
     Args:
       row_id: The ID for the individual row.
-      row_number: str or int The position of the desired row. Numbering 
+      row_number: str or int The position of the desired row. Numbering
           begins at 1, which refers to the second row in the worksheet since
           the first row is used for column names.
 
@@ -367,8 +367,8 @@ class Table(object):
     if row_id:
       row_entry = self.client._GetSpreadsheetsClient().GetListFeed(
           self.spreadsheet_key, wksht_id=self.worksheet_id, row_id=row_id)
-      return Record(content=None, row_entry=row_entry, 
-           spreadsheet_key=self.spreadsheet_key, 
+      return Record(content=None, row_entry=row_entry,
+           spreadsheet_key=self.spreadsheet_key,
            worksheet_id=self.worksheet_id, database_client=self.client)
     else:
       row_query = gdata.spreadsheet.service.ListQuery()
@@ -421,7 +421,7 @@ class Table(object):
     row_query.sq = query_string
     matching_feed = self.client._GetSpreadsheetsClient().GetListFeed(
         self.spreadsheet_key, wksht_id=self.worksheet_id, query=row_query)
-    return RecordResultSet(matching_feed, self.client, 
+    return RecordResultSet(matching_feed, self.client,
         self.spreadsheet_key, self.worksheet_id)
 
 
@@ -441,7 +441,7 @@ class RecordResultSet(list):
     self.feed = feed
     list(self)
     for entry in self.feed.entry:
-      self.append(Record(content=None, row_entry=entry, 
+      self.append(Record(content=None, row_entry=entry,
           spreadsheet_key=spreadsheet_key, worksheet_id=worksheet_id,
           database_client=client))
 
@@ -453,7 +453,7 @@ class RecordResultSet(list):
     """
     next_link = self.feed.GetNextLink()
     if next_link and next_link.href:
-      new_feed = self.client._GetSpreadsheetsClient().Get(next_link.href, 
+      new_feed = self.client._GetSpreadsheetsClient().Get(next_link.href,
           converter=gdata.spreadsheet.SpreadsheetsListFeedFromString)
       return RecordResultSet(new_feed, self.client, self.spreadsheet_key,
           self.worksheet_id)
@@ -467,15 +467,15 @@ class Record(object):
         to column headers.
   """
 
-  def __init__(self, content=None, row_entry=None, spreadsheet_key=None, 
+  def __init__(self, content=None, row_entry=None, spreadsheet_key=None,
        worksheet_id=None, database_client=None):
     """Constructor for a record.
-    
+
     Args:
       content: dict of strings Mapping of string values to column names.
-      row_entry: gdata.spreadsheet.SpreadsheetsList The Atom entry 
+      row_entry: gdata.spreadsheet.SpreadsheetsList The Atom entry
           representing this row in the worksheet.
-      spreadsheet_key: str The ID of the spreadsheet in which this row 
+      spreadsheet_key: str The ID of the spreadsheet in which this row
           belongs.
       worksheet_id: str The ID of the worksheet in which this row belongs.
       database_client: DatabaseClient The client which can be used to talk
@@ -499,7 +499,7 @@ class Record(object):
     This method is used in the Record's contructor.
 
     Args:
-      entry: gdata.spreadsheet.SpreadsheetsList The Atom entry 
+      entry: gdata.spreadsheet.SpreadsheetsList The Atom entry
           representing this row in the worksheet.
     """
     self.content = {}
@@ -521,7 +521,7 @@ class Record(object):
   def Pull(self):
     """Query Google Spreadsheets to get the latest data from the server.
 
-    Fetches the entry for this row and repopulates the content dictionary 
+    Fetches the entry for this row and repopulates the content dictionary
     with the data found in the row.
     """
     if self.row_id:
@@ -538,7 +538,7 @@ def ConvertStringsToColumnHeaders(proposed_headers):
 
   When setting values in a record, the keys which represent column names must
   fit certain rules. They are all lower case, contain no spaces or special
-  characters. If two columns have the same name after being sanitized, the 
+  characters. If two columns have the same name after being sanitized, the
   columns further to the right have _2, _3 _4, etc. appended to them.
 
   If there are column names which consist of all special characters, or if

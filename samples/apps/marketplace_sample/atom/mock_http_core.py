@@ -21,7 +21,7 @@
 __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
-import StringIO
+from six import StringIO
 import pickle
 import os.path
 import tempfile
@@ -250,7 +250,7 @@ class EchoHttpClient(object):
                               http_request.headers, http_request._body_parts)
 
   def _http_request(self, uri, method, headers=None, body_parts=None):
-    body = StringIO.StringIO()
+    body = StringIO()
     response = atom.http_core.HttpResponse(status=200, reason='OK', body=body)
     if headers is None:
       response._headers = {}

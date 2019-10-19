@@ -25,7 +25,7 @@ __author__ = 'j.s@google.com (Jeff Scudder)'
 
 
 import os
-import StringIO
+from six import StringIO
 import six.moves.urllib.parse
 import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import six.moves.http_client
@@ -380,7 +380,7 @@ class HttpResponse(object):
       if hasattr(body, 'read'):
         self._body = body
       else:
-        self._body = StringIO.StringIO(body)
+        self._body = StringIO(body)
 
   def getheader(self, name, default=None):
     if name in self._headers:
