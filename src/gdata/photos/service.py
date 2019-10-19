@@ -404,8 +404,8 @@ class PhotosService(gdata.service.GDataService):
     elif hasattr(filename_or_handle, 'read'):# it's a file-like resource
       if hasattr(filename_or_handle, 'seek'):
         filename_or_handle.seek(0) # rewind pointer to the start of the file
-      # gdata.MediaSource needs the content length, so read the whole image 
-      file_handle = StringIO.StringIO(filename_or_handle.read()) 
+      # gdata.MediaSource needs the content length, so read the whole image
+      file_handle = StringIO(filename_or_handle.read())
       name = 'image'
       if hasattr(filename_or_handle, 'name'):
         name = filename_or_handle.name
@@ -556,8 +556,8 @@ class PhotosService(gdata.service.GDataService):
     elif hasattr(filename_or_handle, 'read'):# it's a file-like resource
       if hasattr(filename_or_handle, 'seek'):
         filename_or_handle.seek(0) # rewind pointer to the start of the file
-      # gdata.MediaSource needs the content length, so read the whole image 
-      file_handle = StringIO.StringIO(filename_or_handle.read()) 
+      # gdata.MediaSource needs the content length, so read the whole image
+      file_handle = StringIO(filename_or_handle.read())
       name = 'image'
       if hasattr(filename_or_handle, 'name'):
         name = filename_or_handle.name

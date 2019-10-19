@@ -341,7 +341,7 @@ class DocumentListUpdateTest(DocumentsListServiceTest):
 
     # Append content to document
     data = 'data to append'
-    ms = gdata.MediaSource(file_handle=StringIO.StringIO(data),
+    ms = gdata.MediaSource(file_handle=StringIO(data),
                            content_type='text/plain',
                            content_length=len(data))
     uri = updated_entry.GetEditMediaLink().href + '?append=true'

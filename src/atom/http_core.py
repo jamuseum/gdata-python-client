@@ -380,7 +380,7 @@ class HttpResponse(object):
       if hasattr(body, 'read'):
         self._body = body
       else:
-        self._body = StringIO.StringIO(body)
+        self._body = StringIO(body)
 
   def getheader(self, name, default=None):
     if name in self._headers:

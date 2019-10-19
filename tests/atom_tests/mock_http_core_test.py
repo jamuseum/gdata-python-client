@@ -55,6 +55,7 @@ class EchoClientTest(unittest.TestCase):
     self.assert_(response.getheader('Echo-Method') == 'POST')
     self.assert_(response.getheader('Echo-Uri') == '/')
     
+
     # Send a multipart request.
     request = atom.http_core.HttpRequest(method='POST',
         uri=atom.http_core.Uri(scheme='https', host='www.jeffscudder.com', 
@@ -62,7 +63,7 @@ class EchoClientTest(unittest.TestCase):
                                query={'test': 'true', 'happy': 'yes'}), 
         headers={'Authorization':'Test xyzzy', 'Testing':'True'})
     request.add_body_part('start', 'text/plain')
-    request.add_body_part(StringIO.StringIO('<html><body>hi</body></html>'),
+    request.add_body_part(StringIO('<html><body>hi</body></html>'),
                           'text/html', len('<html><body>hi</body></html>'))
     request.add_body_part('alert("Greetings!")', 'text/javascript')
     response = client.request(request)

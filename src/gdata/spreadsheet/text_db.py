@@ -138,12 +138,12 @@ class DatabaseClient(object):
       name: str The title for the spreadsheet.
 
     Returns:
-      A Database instance representing the new spreadsheet. 
+      A Database instance representing the new spreadsheet.
     """
     # Create a Google Spreadsheet to form the foundation of this database.
     # Spreadsheet is created by uploading a file to the Google Documents
     # List API.
-    virtual_csv_file = StringIO.StringIO(',,,')
+    virtual_csv_file = StringIO(',,,')
     virtual_media_source = gdata.MediaSource(file_handle=virtual_csv_file, content_type='text/csv', content_length=3)
     db_entry = self.__docs_client.UploadSpreadsheet(virtual_media_source, name)
     return Database(spreadsheet_entry=db_entry, database_client=self)

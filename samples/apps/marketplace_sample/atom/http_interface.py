@@ -62,19 +62,19 @@ class HttpResponse(object):
 
     Args:
       body: A file like object, with a read() method. The body could also
-          be a string, and the constructor will wrap it so that 
+          be a string, and the constructor will wrap it so that
           HttpResponse.read(self) will return the full string.
       status: The HTTP status code as an int. Example: 200, 201, 404.
-      reason: The HTTP status message which follows the code. Example: 
+      reason: The HTTP status message which follows the code. Example:
           OK, Created, Not Found
-      headers: A dictionary containing the HTTP headers in the server's 
+      headers: A dictionary containing the HTTP headers in the server's
           response. A common header in the response is Content-Length.
     """
     if body:
       if hasattr(body, 'read'):
         self._body = body
       else:
-        self._body = StringIO.StringIO(body)
+        self._body = StringIO(body)
     else:
       self._body = None
     if status is not None:

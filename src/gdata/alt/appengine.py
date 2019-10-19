@@ -175,7 +175,7 @@ class HttpResponse(object):
   """
 
   def __init__(self, urlfetch_response):
-    self.body = StringIO.StringIO(urlfetch_response.content)
+    self.body = StringIO(urlfetch_response.content)
     self.headers = urlfetch_response.headers
     self.status = urlfetch_response.status_code
     self.reason = ''

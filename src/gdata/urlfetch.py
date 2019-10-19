@@ -225,13 +225,13 @@ def __ConvertDataPart(data):
 
 class HttpResponse(object):
   """Translates a urlfetch resoinse to look like an hhtplib resoinse.
-  
+
   Used to allow the resoinse from HttpRequest to be usable by gdata.service
   methods.
   """
 
   def __init__(self, urlfetch_response):
-    self.body = StringIO.StringIO(urlfetch_response.content)
+    self.body = StringIO(urlfetch_response.content)
     self.headers = urlfetch_response.headers
     self.status = urlfetch_response.status_code
     self.reason = ''

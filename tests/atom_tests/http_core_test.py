@@ -23,11 +23,11 @@ __author__ = 'j.s@google.com (Jeff Scudder)'
 
 import unittest
 import atom.http_core
-import StringIO
+from six import StringIO
 
 
 class UriTest(unittest.TestCase):
-  
+
   def test_parse_uri(self):
     uri = atom.http_core.parse_uri('http://www.google.com/test?q=foo&z=bar')
     self.assert_(uri.scheme == 'http')
@@ -114,9 +114,9 @@ class HttpRequestTest(unittest.TestCase):
     self.assert_(request._body_parts[0] == 'this is a test')
     self.assert_(request.headers['Content-Length'] == str(len(
         'this is a test')))
-    
+
   def test_add_file_without_size(self):
-    virtual_file = StringIO.StringIO('this is a test')
+    virtual_file = StringIO('this is a test')
     request = atom.http_core.HttpRequest()
     try:
       request.add_body_part(virtual_file, 'text/plain')
